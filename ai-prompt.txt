@@ -1,0 +1,27 @@
+Output a single JSON object summarizing page-level details for the provided HTML page.
+
+Instructions:
+- Populate every field in the JSON output according to the schema below.
+- For missing data, use: empty string for text fields, empty array for list fields, or false for Boolean fields.
+- Analyze only the body content, excluding elements matching ".left-sidebar", ".right-sidebar", ".usa-accordion" (main navigation), and the site footer.
+- If a left or right sidebar exists, briefly (1–2 sentences) describe its content and purpose for the `sidebar` field.
+
+JSON schema:
+- page_description: Concise (1–2 sentence) summary of the page’s main content.
+- slideshows: For each carousel (eg. ".slick-slider",".swiper-container" or "carousel" or elements that are slideshows, carousels, sliders etc.), include its selector and all slide image URLs.
+- has_tabs: true if any element has role="tablist" or a data-tab attribute; otherwise false.
+- if true, tab_class must be a non-empty string of the tab's full selector from the body tag.
+- has_accordions: true if any element has class "accordion" or a data-accordion attribute, or has the "usa-accordion" class or any other accordion-like behavior. False if "nav .usa-accordion" is found. False when these are only found inside main navigation menus—i.e., any <nav> element with children, which should always be ignored.
+  - if true, accordion_class must be a non-empty string of the accordion's full selector from the body tag.
+- dynamic_content: CSS selectors of dynamic content (content that is displayed with an interaction) such as tabs, accordions, dropdowns that show hidden content, etc.
+- content_tags: Any CMS/taxonomy tags found in class names, data-tag attributes, meta tags, or similar elements.
+- interactive_elements: CSS selectors for interactive widgets (e.g., animations, canvas/SVG charts); otherwise, empty array.
+- is_listing_page: true if the page lists teasers or items of a certain type. Eg. a list of articles of events. Otherwise false.
+  • If true, listing_type must be a non-empty string (e.g., "news", "product", "blog"); otherwise, use an empty string.
+- css_files: All external CSS URLs from <link rel="stylesheet"> elements.
+- js_files: All external JS URLs from <script src=""> elements.
+- js_libraries: Popular JS libraries detected (name and version if available), e.g., jQuery, Bootstrap, USWDS, React, Vue, Angular.
+- sidebar: Brief description if a  sidebar exists eg. usa-sidenav or similar adjacent elements to main body content; otherwise false.
+- manual_review: true if any of slideshows, has_tabs, has_accordions, content_tags, interactive_elements, or is_listing_page is non-empty/true; otherwise false. Do not set to true solely because left_sidebar or right_sidebar has a value.
+
+Return exactly one JSON object per page.
