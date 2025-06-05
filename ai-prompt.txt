@@ -3,8 +3,9 @@ Output a single JSON object summarizing page-level details for the provided HTML
 Instructions:
 - Populate every field in the JSON output according to the schema below.
 - For missing data, use: empty string for text fields, empty array for list fields, or false for Boolean fields.
-- Analyze only the body content, excluding elements matching ".left-sidebar", ".right-sidebar", ".usa-accordion" (main navigation), and the site footer.
+- Analyze only the body content, excluding elements matching ".usa-accordion" (main navigation), and the site footer.
 - If a left or right sidebar exists, briefly (1–2 sentences) describe its content and purpose for the `sidebar` field.
+- If a sidebar exists (look for elements with class names containing "sidebar", "aside", HTML5 <aside> elements, or ".usa-sidenav"), briefly (1–2 sentences) describe its content and purpose for the `sidebar` field. If no sidebar exists, use the boolean value `false`.
 
 JSON schema:
 - page_description: Concise (1–2 sentence) summary of the page’s main content.
@@ -22,6 +23,7 @@ JSON schema:
 - js_files: All external JS URLs from <script src=""> elements.
 - js_libraries: Popular JS libraries detected (name and version if available), e.g., jQuery, Bootstrap, USWDS, React, Vue, Angular.
 - sidebar: Brief description if a  sidebar exists eg. usa-sidenav or similar adjacent elements to main body content; otherwise false.
-- manual_review: true if any of slideshows, has_tabs, has_accordions, content_tags, interactive_elements, or is_listing_page is non-empty/true; otherwise false. Do not set to true solely because left_sidebar or right_sidebar has a value.
+- sidebar_has_menu: Returns boolean "true" if the sidebar exists and has a structures resembling menus. eg. <nav> elements, <ul> <li> links, or a list of links.
+- manual_review: true if any of slideshows, sidebar_has_menu, has_tabs, has_accordions, content_tags, interactive_elements, or is_listing_page is non-empty/true; otherwise false. Do not set to true solely because left_sidebar or right_sidebar has a value.
 
 Return exactly one JSON object per page.
