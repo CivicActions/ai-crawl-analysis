@@ -3,45 +3,62 @@ import json
 import re
 import os
 
-input_file = 'audit-inputs/59-usap-recrawl.csv'
-output_file = os.path.join("audit-outputs", os.path.splitext(os.path.basename(input_file))[0] + "-expanded.csv")
-json_col = 'Gemini: JSON Schema'
+# === CONFIGURATION ===
+input_file = 'audit-inputs/66_srcprogram.ceriumapplications.csv'  # Change this to the downloaded CSV file.
+json_col = 'Gemini: JSON schema'         # Change this to the JSON column name if needed.
 
+input_name = os.path.splitext(os.path.basename(input_file))[0]
+output_file = os.path.join('audit-outputs', f"{input_name}-expanded.csv")
+
+# === Extract the JSON objects from json_col ===
 def extract_json(text):
     if not text:
         return {}
-    match = re.search(r'```json\s*({.*})\s*```', text, re.DOTALL)
-    if match:
-        json_str = match.group(1)
-    else:
-        json_str = text
+
+    text = text.strip()
+    # Try to extract JSON from triple backticks, with or without 'json'
+    match = re.search(r"```(?:json)?\s*({.*?})\s*```", text, re.DOTALL)
+    json_str = match.group(1) if match else text
+
     try:
         return json.loads(json_str)
-    except Exception:
+    except json.JSONDecodeError:
+        print(f"⚠️ Failed to parse JSON:\n{text[:200]}")
         return {}
 
+# === Read and Parse CSV ===
 with open(input_file, newline='', encoding='utf-8') as f:
     reader = csv.DictReader(f)
     rows = list(reader)
-    all_keys = set()
+
+    if json_col not in reader.fieldnames:
+        print(f"❌ Column '{json_col}' not found in CSV. Available columns:\n{reader.fieldnames}")
+        exit(1)
+
+    # Collect all keys across all JSON objects
+    json_keys = set()
     for row in rows:
         js = extract_json(row.get(json_col, ''))
-        all_keys.update(js.keys())
+        if isinstance(js, dict):
+            for k in js.keys():
+                # Avoid overwriting existing CSV fields
+                if k not in reader.fieldnames:
+                    json_keys.add(k)
+
+# === Write Expanded CSV ===
+fieldnames = [f for f in reader.fieldnames if f != json_col] + sorted(json_keys)
 
 with open(output_file, 'w', newline='', encoding='utf-8') as f:
-    # fieldnames = reader.fieldnames + [k for k in all_keys if k not in reader.fieldnames]
-    fieldnames = [fn for fn in reader.fieldnames if fn != json_col] + [k for k in all_keys if k not in reader.fieldnames]
-
     writer = csv.DictWriter(f, fieldnames=fieldnames)
     writer.writeheader()
+
     for row in rows:
-        
         js = extract_json(row.get(json_col, ''))
-        for k in all_keys:
-            row[k] = js.get(k, '')
-        del row[json_col]
-        writer.writerow(row)
+        expanded = {k: js.get(k, '') for k in json_keys} if isinstance(js, dict) else {}
+        # Don't modify original row dict directly
+        clean_row = {k: row.get(k, '') for k in fieldnames if k not in json_keys}
+        clean_row.update(expanded)
+        writer.writerow(clean_row)
 
+print(f"✅ Expanded CSV written to: {output_file}")
 
-
-print(f"Expanded CSV written to {output_file}")
