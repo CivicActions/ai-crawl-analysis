@@ -6,9 +6,11 @@ Instructions:
 - Analyze only the body content, excluding elements matching ".usa-accordion" (main navigation), and the site footer.
 - If a left or right sidebar exists, briefly (1–2 sentences) describe its content and purpose for the `sidebar` field.
 - If a sidebar exists (look for elements with class names containing "sidebar", "aside", HTML5 <aside> elements, or ".usa-sidenav"), briefly (1–2 sentences) describe its content and purpose for the `sidebar` field. If no sidebar exists, use the boolean value `false`.
+- For the page_structure field, analyze the content layout and identify fields or content components that would need to be migrated, including their hierarchy and relationships. Do not use content headings to determine fields. Identify reusable patterns in the page structure. Also review the sidebar for potential fields.
 
 JSON schema:
 - page_description: Concise (1–2 sentence) summary of the page’s main content.
+- page_structure: An object showing the page's content structure, including key components that would need to be migrated. Identify primary content fields (e.g., title, body, images) and their relationships. Include field names, their types (text, image, file, reference), any nested structures. For structured content, note if it appears to follow a template or content type.
 - slideshows: For each carousel (eg. ".slick-slider",".swiper-container" or "carousel" or elements that are slideshows, carousels, sliders etc.), include its selector and all slide image URLs.
 - has_tabs: true if any element has role="tablist" or a data-tab attribute; otherwise false.
 - if true, tab_class must be a non-empty string of the tab's full selector from the body tag.
