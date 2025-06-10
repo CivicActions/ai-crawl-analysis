@@ -1,4 +1,4 @@
-# AI Migration Tools
+# AI-powered Migration Tools
 
 ## ✨ Description
 This repository outlines processes and includes tools used for interpreting data generated from site crawls to inform content migrations. The tools are designed to assist with data migration, data cleaning, and AI-fueled data analysis tasks. The goal is to apply data-based decisions to consolidating the migration of multiple sites.
@@ -26,7 +26,6 @@ This repository outlines processes and includes tools used for interpreting data
   - `audit-inputs/`: Raw CSV files for processing.
   - `audit-outputs/`: Processed and expanded CSV files.
 - `prompts/`: Prompt templates for AI-powered tasks.
-- `temp/`: Temporary scripts and playground files.
 
 ## 📦 Requirements
 
@@ -44,7 +43,7 @@ This repository outlines processes and includes tools used for interpreting data
     brew install uv
 ```
 
-For mor options, review the [Documentation for installing uv](https://docs.astral.sh/uv/getting-started/installation/)
+For more options, review the [Documentation for installing uv](https://docs.astral.sh/uv/getting-started/installation/)
 
 
 ## 🔧 Getting Started
@@ -74,7 +73,7 @@ Project scripts are structured as modules. You can
 
 
 ### Environment variables
-The crawl_analysis script requires an API_KEY environment variable. Edit the env.example fiel at the root of the rject to add your AI API Key.
+The crawl_analysis script requires an API_KEY environment variable. Edit the env.example field at the root of the project to add your AI API Key.
 
 ## License
 
