@@ -2,6 +2,8 @@ import csv
 import json
 import re
 import os
+from ai_migrations.utilities.filter_html_rows import filter_html_rows
+from ai_migrations.utilities.header_cleaner import clean_header
 
 # === CONFIGURATION ===
 input_file = 'data/audit-inputs/sample-seed-fund.csv'  # Change this to the downloaded CSV file.
@@ -10,11 +12,10 @@ json_col = 'Gemini: JSON schema'
 input_name = os.path.splitext(os.path.basename(input_file))[0]
 output_file = os.path.join('data/audit-outputs', f"{input_name}-expanded.csv")
 
-def clean_header(header):
-    # Remove non-alphanumeric characters except underscores and spaces, then lowercase and replace spaces with underscores
-    cleaned = re.sub(r'[^a-zA-Z0-9_ ]', '', header)
-    cleaned = cleaned.lower().replace(' ', '_')
-    return cleaned
+# Filter the input file and overwrite it with only text/html rows before further processing
+filtered_input_file = input_file + '.filtered.csv'
+filter_html_rows(input_file, filtered_input_file)
+input_file = filtered_input_file
 
 # === Extract the JSON objects from json_col ===
 def extract_json(text):
