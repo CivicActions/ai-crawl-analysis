@@ -4,11 +4,11 @@ import re
 import os
 
 # === CONFIGURATION ===
-input_file = 'audit-inputs/sample-seed-fund.csv'  # Change this to the downloaded CSV file.
+input_file = 'data/audit-inputs/sample-seed-fund.csv'  # Change this to the downloaded CSV file.
 json_col = 'Gemini: JSON schema'
 
 input_name = os.path.splitext(os.path.basename(input_file))[0]
-output_file = os.path.join('audit-outputs', f"{input_name}-expanded.csv")
+output_file = os.path.join('data/audit-outputs', f"{input_name}-expanded.csv")
 
 # === Extract the JSON objects from json_col ===
 def extract_json(text):

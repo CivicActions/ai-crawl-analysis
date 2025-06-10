@@ -1,2 +1,4 @@
-audit-inputs
-audit-outputs
+data/audit-inputs/*
+data/audit-outputs/*
+temp
+.DS_Store

@@ -37,7 +37,7 @@ def get_deduplicated_items_from_column(csv_filename: str, column_name: str) -> L
 # Example usage:
 if __name__ == "__main__":
     # Change the filename and column as needed
-    csv_file = "audit-outputs/59-usap-recrawl-expanded.csv"
+    csv_file = "data/audit-outputs/sample-seed-fund-expanded.csv"
     column = "js_libraries"
     result = get_deduplicated_items_from_column(csv_file, column)
     print(f"Deduplicated items in '{column}':")
