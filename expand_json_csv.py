@@ -4,8 +4,8 @@ import re
 import os
 
 # === CONFIGURATION ===
-input_file = 'audit-inputs/66_srcprogram.ceriumapplications.csv'  # Change this to the downloaded CSV file.
-json_col = 'Gemini: JSON schema'         # Change this to the JSON column name if needed.
+input_file = 'audit-inputs/sample-seed-fund.csv'  # Change this to the downloaded CSV file.
+json_col = 'Gemini: JSON schema'
 
 input_name = os.path.splitext(os.path.basename(input_file))[0]
 output_file = os.path.join('audit-outputs', f"{input_name}-expanded.csv")
@@ -30,8 +30,9 @@ def extract_json(text):
 with open(input_file, newline='', encoding='utf-8') as f:
     reader = csv.DictReader(f)
     rows = list(reader)
+    lowercase_headers = [h.lower() for h in reader.fieldnames]
 
-    if json_col not in reader.fieldnames:
+    if json_col.lower() not in lowercase_headers:
         print(f"❌ Column '{json_col}' not found in CSV. Available columns:\n{reader.fieldnames}")
         exit(1)
 
