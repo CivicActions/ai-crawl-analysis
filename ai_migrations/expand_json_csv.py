@@ -35,11 +35,14 @@ with open(input_file, newline='', encoding='utf-8') as f:
     if json_col.lower() not in lowercase_headers:
         print(f"❌ Column '{json_col}' not found in CSV. Available columns:\n{reader.fieldnames}")
         exit(1)
-
+    
+    # Find the actual column name with correct case
+    actual_json_col = next((h for h in reader.fieldnames if h.lower() == json_col.lower()), json_col)
+    
     # Collect all keys across all JSON objects
     json_keys = set()
     for row in rows:
-        js = extract_json(row.get(json_col, ''))
+        js = extract_json(row.get(actual_json_col, ''))
         if isinstance(js, dict):
             for k in js.keys():
                 # Avoid overwriting existing CSV fields
@@ -47,14 +50,14 @@ with open(input_file, newline='', encoding='utf-8') as f:
                     json_keys.add(k)
 
 # === Write Expanded CSV ===
-fieldnames = [f for f in reader.fieldnames if f != json_col] + sorted(json_keys)
+fieldnames = [f for f in reader.fieldnames if f.lower() != json_col.lower()] + sorted(json_keys)
 
 with open(output_file, 'w', newline='', encoding='utf-8') as f:
     writer = csv.DictWriter(f, fieldnames=fieldnames)
     writer.writeheader()
 
     for row in rows:
-        js = extract_json(row.get(json_col, ''))
+        js = extract_json(row.get(actual_json_col, ''))
         expanded = {k: js.get(k, '') for k in json_keys} if isinstance(js, dict) else {}
         # Don't modify original row dict directly
         clean_row = {k: row.get(k, '') for k in fieldnames if k not in json_keys}
@@ -62,4 +65,5 @@ with open(output_file, 'w', newline='', encoding='utf-8') as f:
         writer.writerow(clean_row)
 
 print(f"✅ Expanded CSV written to: {output_file}")
+print(f"✅ Added {len(json_keys)} new columns from JSON data: {', '.join(sorted(json_keys))}")
 
