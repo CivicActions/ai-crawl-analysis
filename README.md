@@ -63,8 +63,13 @@ For more options, review the [Documentation for installing uv](https://docs.astr
 Project scripts are structured as modules. You can 
 - Run them using uv run or standard Python module syntax
    ```bash
-   uv run -m ai_migrations (WIP)
+   uv run -m ai_migrations (Not working yet. WIP)
    ```
+- Run individual scripts with these commands:
+   ```bash
+     uv run -m ai_migrations.expand_json_csv
+     uv run -m ai_migrations.deduplicate_column_items
+     uv run -m ai_migrations.crawl analysis
 **OR**
 
 - Run them using Python directly
