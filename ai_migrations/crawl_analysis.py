@@ -74,11 +74,23 @@ if __name__ == "__main__":
         f.write(response)
     print(f"Migration groups assigned and saved to {migration_groups_json}")
 
+    if not response:
+      print("No migration groups found. Skipping sidebar analysis.")
+      exit(0)
 
-    json_for_polars = polars.read_json(migration_groups_json)
-    print(f"json file count: {json_for_polars.height}")
+    # Check if the sidebar column has any content
+    new_json_df = polars.read_json(new_json)
+    has_sidebar = new_json_df.select('sidebar').any()
+    
+    if 'sidebar' not in new_json_df.columns:
+      print("No sidebar column found in the migration groups JSON. Skipping sidebar analysis.")
+      exit(0)
 
-    # # Pass #2 if the sidebar column has content analyze the content, rewrite the sidebar content so similar sidebars have the same description.
+    if not has_sidebar:
+      print("No sidebar content found in the migration groups JSON. Skipping sidebar analysis.")
+      exit(0)
+    
+    # Pass #2: If the sidebar column has content, analyze the content, rewrite the sidebar content so similar sidebars have the same description.
     pass2_prompt = """
       You are given a JSON file that contains site crawl data. The JSON includes a key titled "sidebar" that provides information about the sidebar content for each page.
       Your task is to analyze the sidebar content and rewrite and consolidate the data to make similar sidebars use the same description.
