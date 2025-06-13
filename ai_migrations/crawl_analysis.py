@@ -63,9 +63,7 @@ if __name__ == "__main__":
     response = call_ai(
         prompt,
         system_instructions,
-        new_json,
-        model="gemini-2.0-flash-lite",
-        temperature=0.3
+        new_json
     )
     # Write the response to a new JSON file
     migration_groups_json = 'data/crawl-analysis/migration_groups.json'
@@ -79,16 +77,16 @@ if __name__ == "__main__":
       exit(0)
 
     # Check if the sidebar column has any content
-    new_json_df = polars.read_json(new_json)
-    has_sidebar = new_json_df.select('sidebar').any()
+    # new_json_df = polars.read_json(new_json)
+    # has_sidebar = new_json_df.select('sidebar').any()
     
-    if 'sidebar' not in new_json_df.columns:
-      print("No sidebar column found in the migration groups JSON. Skipping sidebar analysis.")
-      exit(0)
+    # if 'sidebar' not in new_json_df.columns:
+    #   print("No sidebar column found in the migration groups JSON. Skipping sidebar analysis.")
+    #   exit(0)
 
-    if not has_sidebar:
-      print("No sidebar content found in the migration groups JSON. Skipping sidebar analysis.")
-      exit(0)
+    # if not has_sidebar:
+    #   print("No sidebar content found in the migration groups JSON. Skipping sidebar analysis.")
+    #   exit(0)
     
     # Pass #2: If the sidebar column has content, analyze the content, rewrite the sidebar content so similar sidebars have the same description.
     pass2_prompt = """
@@ -105,9 +103,7 @@ if __name__ == "__main__":
     sidebar_response = call_ai(
         pass2_prompt,
         system_instructions,
-        migration_groups_json,
-        model="gemini-2.0-flash-lite",
-        temperature=0.3
+        migration_groups_json
     )
 
     # Write the response to a new JSON file

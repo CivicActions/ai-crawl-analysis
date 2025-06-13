@@ -5,7 +5,7 @@ from google.genai import types
 
 load_dotenv()
 
-def call_ai(prompt: str, system_instructions: str, file: str, model: str = "gemini", temperature: float = 0.7) -> str:
+def call_ai(prompt: str, system_instructions: str, file: str, model: str = "gemini-2.5-pro-preview-06-05", temperature: float = 0.3) -> str:
     """
     Call an AI model with a given prompt and return the response.
     
