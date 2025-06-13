@@ -5,7 +5,7 @@ from google.genai import types
 
 load_dotenv()
 
-def call_ai(prompt: str, file: str, model: str = "gemini", temperature: float = 0.7) -> str:
+def call_ai(prompt: str, system_instructions: str, file: str, model: str = "gemini", temperature: float = 0.7) -> str:
     """
     Call an AI model with a given prompt and return the response.
     
@@ -29,25 +29,28 @@ def call_ai(prompt: str, file: str, model: str = "gemini", temperature: float = 
 
     # Initialize the AI client with the API key
     client = genai.Client(api_key=api_key)
-    # If a file is provided, confirm that it is a csv file and read its content
+    # If a file is provided, confirm that it is a JSON file and read its content
     if file:
-        if not file.lower().endswith('.csv'):
-            raise ValueError("Only CSV files are supported for analysis.")
+        if not file.lower().endswith('.json'):
+            raise ValueError("Only JSON files are supported for analysis.")
         
         try:
             with open(file, 'r', encoding='utf-8') as f:
-                csv_content = f.read()
+                json_content = f.read()
         except FileNotFoundError:
             raise FileNotFoundError(f"The file '{file}' was not found.")
         except Exception as e:
-            raise Exception(f"Error reading the CSV file: {str(e)}")
+            raise Exception(f"Error reading the JSON file: {str(e)}")
+        
+    system_instructions = system_instructions or "You are an AI assistant that provides insights based on the provided data."
 
     # Generate content using the specified model and prompt.
     response = client.models.generate_content(
         model=model,
-        contents=[csv_content, prompt] if file else prompt,
+        contents=[json_content, prompt] if file else prompt,
         config=types.GenerateContentConfig(
             temperature=temperature,
+            system_instruction=system_instructions,
         )
     )
     # Return the text response from the AI model.
