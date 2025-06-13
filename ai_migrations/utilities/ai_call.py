@@ -1,26 +1,50 @@
+"""
+Call an AI model with a given prompt and return the response.
+
+Parameters:
+  :param prompt: The prompt to send to the AI model.
+  :param system_instructions: Instructions to guide the AI model's behavior.
+  :param file: Optional JSON file to provide load the data to process. Will accept just a text prompt if no file is provided.
+  :param model: The AI model to use (default is "gemini-2.5-pro-preview-06-05").
+  :param temperature: The temperature for the model's response (default is 0.3).
+  :return: The response from the AI model.
+
+Usage:
+  from ai_migrations.utilities.ai_call import call_ai
+  response = call_ai(
+        prompt,
+        json_file)
+
+  Run directly to test: python run ai_migrations.utilities.ai_call OR uv run -m ai_migrations.utilities.ai_call
+"""
+
 from dotenv import load_dotenv
 import os
 from google import genai
 from google.genai import types
 
-load_dotenv()
+API_KEY = 'GEMINI_API_KEY'
+DEFAULT_SYSTEM_INSTRUCTIONS = "You are an AI assistant that provides insights based on the provided data."
+DEFAULT_MODEL = "gemini-2.5-pro-preview-06-05"
+DEFAULT_RESPONSE_SCHEMA = {"type": "object", "properties": {"insights": {"type": "string"}}}
 
-def call_ai(prompt: str, system_instructions: str, file: str, model: str = "gemini-2.5-pro-preview-06-05", temperature: float = 0.3) -> str:
-    """
-    Call an AI model with a given prompt and return the response.
-    
-    :param prompt: The prompt to send to the AI model.
-    :param model: The AI model to use (default is "gemini").
-    :param temperature: The temperature for the model's response (default is 0.7).
-    :return: The response from the AI model.
-    """
+def call_ai(
+        prompt: str,
+        file: str = None,
+        system_instructions: str = DEFAULT_SYSTEM_INSTRUCTIONS,
+        model: str = DEFAULT_MODEL,
+        temperature: float = 0.3,
+        response_schema = DEFAULT_RESPONSE_SCHEMA
+        ) -> str:
+
     if not prompt:
         raise ValueError("Prompt cannot be empty.")
     if not (0.0 <= temperature <= 1.0):
         raise ValueError("Temperature must be between 0.0 and 1.0.")
     
     # Load the API key from environment variables
-    api_key = os.getenv("GEMINI_API_KEY")
+    load_dotenv()
+    api_key = os.getenv(API_KEY)
 
     if not api_key:
         raise ValueError("API key for the AI model is not set in environment variables.")
@@ -31,7 +55,6 @@ def call_ai(prompt: str, system_instructions: str, file: str, model: str = "gemi
     if file:
         if not file.lower().endswith('.json'):
             raise ValueError("Only JSON files are supported for analysis.")
-
         try:
             with open(file, 'r', encoding='utf-8') as f:
                 json_content = f.read()
@@ -39,8 +62,6 @@ def call_ai(prompt: str, system_instructions: str, file: str, model: str = "gemi
             raise FileNotFoundError(f"The file '{file}' was not found.")
         except Exception as e:
             raise Exception(f"Error reading the JSON file: {str(e)}")
-        
-    system_instructions = system_instructions or "You are an AI assistant that provides insights based on the provided data."
 
     # Generate content using the specified model and prompt.
     response = client.models.generate_content(
@@ -49,6 +70,7 @@ def call_ai(prompt: str, system_instructions: str, file: str, model: str = "gemi
         config=types.GenerateContentConfig(
             temperature=temperature,
             system_instruction=system_instructions,
+            response_schema=response_schema
         )
     )
     # Return the text response from the AI model.
@@ -56,8 +78,7 @@ def call_ai(prompt: str, system_instructions: str, file: str, model: str = "gemi
 
 if __name__ == "__main__":
     # Example usage
-    prompt = "Analyze the data in this CSV file and provide insights."
-    file = "data/audit-outputs/sample-seed-fund-expanded.csv"  # Change this to your input CSV file
-    response = call_ai(prompt, file, model="gemini", temperature=0.5)
+    prompt = "Analyze the data in this JSON file and provide insights."
+    file = "data/audit-outputs/extracted_columns.json"  # Change this to your input JSON file
+    response = call_ai(prompt, file)
     print("\nAI Response:", response)
-# Note: Ensure that the GEMINI_API_KEY environment variable is set before running this script.
