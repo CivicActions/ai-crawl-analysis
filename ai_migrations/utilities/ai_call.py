@@ -16,8 +16,6 @@ def call_ai(prompt: str, system_instructions: str, file: str, model: str = "gemi
     """
     if not prompt:
         raise ValueError("Prompt cannot be empty.")
-    if model not in ["gemini-2.0-flash-lite", "gpt-3.5-turbo", "gpt-4"]:
-        raise ValueError("Unsupported model. Supported models are: gemini-2.0-flash-lite, gpt-3.5-turbo, gpt-4.")
     if not (0.0 <= temperature <= 1.0):
         raise ValueError("Temperature must be between 0.0 and 1.0.")
     
@@ -33,7 +31,7 @@ def call_ai(prompt: str, system_instructions: str, file: str, model: str = "gemi
     if file:
         if not file.lower().endswith('.json'):
             raise ValueError("Only JSON files are supported for analysis.")
-        
+
         try:
             with open(file, 'r', encoding='utf-8') as f:
                 json_content = f.read()
