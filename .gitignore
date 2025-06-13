@@ -1,5 +1,7 @@
-data/audit-inputs/*
-data/audit-outputs/*
+data/audit-inputs/**.*
+data/audit-outputs/**.*
+data/crawl-analysis/**.*
+!data/**/.gitkeep
 temp
 .DS_Store
 __pycache__/
