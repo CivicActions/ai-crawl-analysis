@@ -4,7 +4,7 @@ Call an AI model with a given prompt and return the response.
 Parameters:
   :param prompt: The prompt to send to the AI model.
   :param system_instructions: Instructions to guide the AI model's behavior.
-  :param file: Optional JSON file to provide load the data to process. Will accept just a text prompt if no file is provided.
+  :param file: Optional JSON file to provide the data to process. Will accept just the text prompt if no file is provided.
   :param model: The AI model to use (default is "gemini-2.5-pro-preview-06-05").
   :param temperature: The temperature for the model's response (default is 0.3).
   :return: The response from the AI model.
