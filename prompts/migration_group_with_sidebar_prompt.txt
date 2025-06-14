@@ -1,0 +1,8 @@
+You are given a JSON file that contains site crawl data. The JSON includes a key titled "sidebar" that provides information about the sidebar content for each page.
+Your task is to analyze the sidebar content and rewrite and consolidate the data to make similar sidebars use the same description.
+Return the original JSON data, with an additional key called "streamlined_sidebar" containing the new description.
+Important guidelines:
+- Use the information in the migration_group key to help identify sidebars that are similar and may belong in the same group.
+- Focus on the purpose and content of the sidebar.
+- Use consistent language and terminology.
+- If you encounter a sidebar with no content, you may leave it unchanged.

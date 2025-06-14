@@ -1,0 +1,33 @@
+{
+  "type": "object",
+  "properties": {
+    "address": {
+      "type": "string",
+      "description": "The URL of the page."
+    },
+    "page_description": {
+      "type": "string",
+      "description": "A brief description of the page content."
+    },
+    "page_structure": {
+      "type": "string",
+      "description": "A JSON string representing the structure of the page, including forms and fields."
+    },
+    "sidebar": {
+      "type": "string",
+      "description": "A JSON string describing the sidebar content and its purpose."
+    },
+    "sidebar_has_menu": {
+      "type": "boolean",
+      "description": "Indicates whether the sidebar contains a menu."
+    },
+    "streamlined_sidebar": {
+      "type": "string",
+      "description": "A JSON string with standardized sidebar descriptions where similar sidebars are described with the same words."
+    },
+    "migration_group": {
+      "type": "string",
+      "description": "The migration group this page belongs to."
+    }
+  }
+}
