@@ -14,6 +14,59 @@ This repository outlines processes and includes tools used for interpreting data
 - **HTML Row Filtering**: Filter out unwanted HTML rows from datasets.
 - **AI Integration**: Utilities for making AI calls to enhance or validate data.
 
+## 🔄 Workflow
+
+A visualization of the project's data processing workflow:
+
+```mermaid
+flowchart TB
+    subgraph "Input"
+        A[Raw Site Crawl CSV]
+    end
+
+    subgraph "Step 1: Data Expansion & Cleaning"
+        B1[Expand JSON Columns]
+        B2[Filter HTML Rows]
+        B3[Clean Headers]
+        A --> B1 --> B2 --> B3
+    end
+    
+    subgraph "Step 2: AI-powered Analysis"
+        C1[Extract Informational Columns]
+        C2[AI Analysis of Site Structure]
+        C3[Generate Migration Groups]
+        C4[Analyze Sidebar Content]
+        B3 --> C1 --> C2 --> C3 --> C4
+    end
+    
+    subgraph "Step 3: Data Organization & Export"
+        D1[Group by Migration Path]
+        D2[Generate Statistics]
+        D3[Export Individual CSV Groups]
+        D4[Create Combined Sorted CSV]
+        C4 --> D1 --> D2 --> D3 --> D4
+    end
+    
+    subgraph "Output Files"
+        E1[Expanded CSV]
+        E2[Migration Groups JSON]
+        E3[Final Analysis JSON]
+        E4[Individual Group CSVs]
+        E5[All Data Sorted CSV]
+        E6[Summary CSV]
+        
+        D4 --> E1 & E2 & E3 & E4 & E5 & E6
+    end
+    
+    classDef inputOutput fill:#f9f,stroke:#333,stroke-width:2px
+    classDef process fill:#bbf,stroke:#333,stroke-width:1px
+    classDef aiProcess fill:#bfb,stroke:#333,stroke-width:1px
+    
+    class A,E1,E2,E3,E4,E5,E6 inputOutput
+    class B1,B2,B3,D1,D2,D3,D4 process
+    class C1,C2,C3,C4 aiProcess
+```
+
 
 ## 📁 Directory Structure
 
