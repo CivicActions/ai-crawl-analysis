@@ -116,7 +116,7 @@ For more options, review the [Documentation for installing uv](https://docs.astr
 Project scripts are structured as modules. You can 
 - Run them using uv run or standard Python module syntax
    ```bash
-   uv run -m ai_migrations (Not working yet. WIP)
+   uv run -m ai_migrations.main [path_to_crawl_file] (eg. data/audit-inputs/sample-seed-fund.csv)
    ```
 - Run individual scripts with these commands:
    ```bash
@@ -127,7 +127,7 @@ Project scripts are structured as modules. You can
 
 - Run them using Python directly
   - Activate the virtual environment
-  - Then run `python -m ai_migrations`
+  - Then run `python -m ai_migrations.main`
 
 
 ### Environment variables
