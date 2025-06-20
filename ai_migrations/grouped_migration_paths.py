@@ -24,8 +24,12 @@ def group_migration_paths(analysis_output: str | Path) -> Dict[str, Any]:
     """
     cleaned_json = read_and_clean_json_file(str(analysis_output))
     df = pl.read_json(StringIO(cleaned_json))
+    # Count total URLs
+    # total_urls = len(df)
+    # logging.info(f"Total URLs in dataset: {total_urls}")
 
-    grouped = df.group_by("migration_group").count().rename({"count": "url_count"})
+    # Using pl.len() instead of deprecated count() method
+    grouped = df.group_by("migration_group").agg(pl.len().alias("url_count"))
     logging.info("\nMigration Groups Summary:\n%s", grouped)
 
     groups_dict = {
@@ -83,7 +87,7 @@ def export_migration_groups(result: Dict[str, Any], output_dir: str | Path) -> N
         logging.info(f"Group '{group_name}' saved to {file_path}")
 
 if __name__ == "__main__":
-    analysis_output_path = Path("data/crawl-analysis/migration_groups.json")
+    analysis_output_path = Path("data/crawl-analysis/sidebar.json")
     output_dir = Path("data/migration_groups")
 
     result = group_migration_paths(analysis_output_path)

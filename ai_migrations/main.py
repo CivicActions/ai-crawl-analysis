@@ -40,7 +40,7 @@ def main():
     # Parse command-line arguments
     parser = argparse.ArgumentParser(description="Process crawled site data for AI-assisted migration.")
     parser.add_argument("input_file", help="Path to the input CSV file with crawled data")
-    parser.add_argument("--skip-steps", type=int, default=0, help="Skip the first N processing steps")
+    parser.add_argument("--skip-steps", type=int, default=0, help="Skip the first N processing steps. There are 3 steps in total. --skip-steps=2 will skip the first two steps and only run the third step.")
     parser.add_argument("--output-dir", default="data", help="Base output directory for all generated files")
     args = parser.parse_args()
     
@@ -82,10 +82,10 @@ def main():
         columns_to_extract = ['address', 'page_description', 'page_structure', 'sidebar', 'sidebar_has_menu']
         
         crawl_analysis(str(expanded_csv), str(extracted_columns_file), columns_to_extract)
-        migration_groups_path = crawl_analysis_dir / "migration_groups.json"
+        migration_groups_path = crawl_analysis_dir / "final-analysis-output.json"
         logger.info(f"Crawl analysis completed, migration groups saved to: {migration_groups_path}")
     else:
-        migration_groups_path = crawl_analysis_dir / "migration_groups.json"
+        migration_groups_path = crawl_analysis_dir / "final-analysis-output.json"
         if not migration_groups_path.exists():
             logger.error(f"Migration groups file not found: {migration_groups_path}")
             sys.exit(1)

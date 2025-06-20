@@ -39,7 +39,7 @@ def extract_json(text):
         print(f"⚠️ Failed to parse JSON:\n{text[:200]}")
         return {}
 
-def expand_json_csv(input_file, output_file, json_col='Gemini: JSON schema'):
+def expand_json_csv(input_file, output_file, json_col='Gemini: JSON schema v5'):
     """
     Expand JSON columns in a CSV file.
     
@@ -112,7 +112,7 @@ def expand_json_csv(input_file, output_file, json_col='Gemini: JSON schema'):
 
 if __name__ == "__main__":
     # Example usage when running this script directly
-    input_file = 'data/audit-inputs/sample-seed-fund.csv'
+    input_file = 'data/audit-inputs/90_research.gov.csv'
     input_name = Path(input_file).stem
     output_file = f'data/audit-outputs/{input_name}-expanded.csv'
     
