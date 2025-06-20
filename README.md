@@ -107,7 +107,11 @@ For more options, review the [Documentation for installing uv](https://docs.astr
 ```
 
 1. **Install dependencies**:
-   Install directly from `pyproject.toml`:
+   - Install the required python version in a virtual env:
+   ```bash
+   uv venv --python 3.13.0
+   ```
+   - Install other dependencies directly from `pyproject.toml`:
    ```bash
    uv pip install -r pyproject.toml
    ```

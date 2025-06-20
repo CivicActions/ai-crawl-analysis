@@ -1,7 +1,7 @@
-data/audit-inputs/**.*
-data/audit-outputs/**.*
-data/crawl-analysis/**.*
-data/migration_groups/**.*
+data/audit-inputs/
+data/audit-outputs/
+data/crawl-analysis/
+data/migration_groups/
 !data/**/.gitkeep
 
 temp
