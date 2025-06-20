@@ -9,8 +9,12 @@ def csv_to_json(input_csv: str):
     :return: Path to the output JSON file.
     """
 
-    # Read the CSV file using Polars
-    df = pl.read_csv(input_csv)
+    # Read the CSV file using Polars with proper handling for "None" values and HTTP Version
+    df = pl.read_csv(
+        input_csv,
+        null_values=["None", "null", "NA", "N/A", ""],
+        schema_overrides={"HTTP Version": pl.Utf8}  # Ensure HTTP Version is always read as string
+    )
 
     # Convert the DataFrame to a list of dictionaries
     data = df.to_dicts()

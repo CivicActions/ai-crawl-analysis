@@ -112,7 +112,7 @@ def expand_json_csv(input_file, output_file, json_col='Gemini: JSON schema v5'):
 
 if __name__ == "__main__":
     # Example usage when running this script directly
-    input_file = 'data/audit-inputs/90_research.gov.csv'
+    input_file = 'data/audit-inputs/sample-seed-fund.csv'
     input_name = Path(input_file).stem
     output_file = f'data/audit-outputs/{input_name}-expanded.csv'
     

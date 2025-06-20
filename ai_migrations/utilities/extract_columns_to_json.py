@@ -16,8 +16,12 @@ import polars
 
 def extract_cols_to_json(input_csv: str, output_json: str, columns: list):
 
-    # Read the input CSV file
-    df = polars.read_csv(input_csv)
+    # Read the input CSV file with proper handling for "None" values and HTTP Version
+    df = polars.read_csv(
+        input_csv,
+        null_values=["None", "null", "NA", "N/A", ""],
+        schema_overrides={"HTTP Version": polars.Utf8}  # Ensure HTTP Version is always read as string
+    )
     
     # Select the specified columns
     selected_df = df.select(columns)

@@ -1,0 +1,21 @@
+Here's some extra text before the JSON starts
+Extra text can cause problems with JSON parsing
+
+```json
+[
+  {
+    "address": "https://example.com/page1",
+    "migration_group": "Guide Article",
+    "page_description": "This is a sample page",
+    "sidebar": true
+  },
+  {
+    "address": "https://example.com/page2",
+    "migration_group": "Landing Page",
+    "page_description": "Another sample page",
+    "sidebar": false
+  }
+]
+```
+
+And here's some extra text after the JSON ends which might confuse parsers
