@@ -39,7 +39,7 @@ def extract_json(text):
         print(f"⚠️ Failed to parse JSON:\n{text[:200]}")
         return {}
 
-def expand_json_csv(input_file, output_file, json_col='Gemini: JSON schema v5'):
+def expand_json_csv(input_file, output_file, json_col='Gemini: JSON schema'):
     """
     Expand JSON columns in a CSV file.
     
@@ -75,40 +75,40 @@ def expand_json_csv(input_file, output_file, json_col='Gemini: JSON schema v5'):
         lowercase_headers = [h.lower() for h in cleaned_headers]
 
         if json_col_clean.lower() not in lowercase_headers:
-            print(f"❌ Column '{json_col}' not found in CSV. Available columns:\n{cleaned_headers}")
-            return None
-        
-        # Find the actual column name with correct case (cleaned)
-        actual_json_col = next((orig for orig, clean in header_map.items() if clean.lower() == json_col_clean.lower()), json_col)
-        
-        # Collect all keys across all JSON objects
-        json_keys = set()
-        for row in rows:
-            js = extract_json(row.get(actual_json_col, ''))
-            if isinstance(js, dict):
-                for k in js.keys():
-                    # Avoid overwriting existing CSV fields
-                    if clean_header(k) not in cleaned_headers:
-                        json_keys.add(clean_header(k))
+            raise ValueError(f"❌ Column '{json_col}' not found in CSV. Available columns: {cleaned_headers}")
 
-    # === Write Expanded CSV ===
-    fieldnames = [h for h in cleaned_headers if h != json_col_clean] + sorted(json_keys)
+        else:
+            # Find the actual column name with correct case (cleaned)
+            actual_json_col = next((orig for orig, clean in header_map.items() if clean.lower() == json_col_clean.lower()), json_col)
+            
+            # Collect all keys across all JSON objects
+            json_keys = set()
+            for row in rows:
+                js = extract_json(row.get(actual_json_col, ''))
+                if isinstance(js, dict):
+                    for k in js.keys():
+                        # Avoid overwriting existing CSV fields
+                        if clean_header(k) not in cleaned_headers:
+                            json_keys.add(clean_header(k))
 
-    with open(output_file, 'w', newline='', encoding='utf-8') as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
-        writer.writeheader()
+            # === Write Expanded CSV ===
+            fieldnames = [h for h in cleaned_headers if h != json_col_clean] + sorted(json_keys)
 
-        for row in rows:
-            js = extract_json(row.get(actual_json_col, ''))
-            expanded = {clean_header(k): js.get(k, '') for k in json_keys} if isinstance(js, dict) else {}
-            # Don't modify original row dict directly
-            clean_row = {clean_header(k): row.get(k, '') for k in original_headers if clean_header(k) in fieldnames and clean_header(k) not in json_keys}
-            clean_row.update(expanded)
-            writer.writerow(clean_row)
-    
-    print(f"✅ Expanded CSV with {len(rows)} rows and {len(fieldnames)} columns written to {output_file}")
-    print(f"✅ Added {len(json_keys)} new columns from JSON data: {', '.join(sorted(json_keys))}")
-    return output_file
+            with open(output_file, 'w', newline='', encoding='utf-8') as f:
+                writer = csv.DictWriter(f, fieldnames=fieldnames)
+                writer.writeheader()
+
+                for row in rows:
+                    js = extract_json(row.get(actual_json_col, ''))
+                    expanded = {clean_header(k): js.get(k, '') for k in json_keys} if isinstance(js, dict) else {}
+                    # Don't modify original row dict directly
+                    clean_row = {clean_header(k): row.get(k, '') for k in original_headers if clean_header(k) in fieldnames and clean_header(k) not in json_keys}
+                    clean_row.update(expanded)
+                    writer.writerow(clean_row)
+            
+            print(f"✅ Expanded CSV with {len(rows)} rows and {len(fieldnames)} columns written to {output_file}")
+            print(f"✅ Added {len(json_keys)} new columns from JSON data: {', '.join(sorted(json_keys))}")
+            return output_file
 
 if __name__ == "__main__":
     # Example usage when running this script directly

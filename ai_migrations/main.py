@@ -66,8 +66,12 @@ def main():
     if args.skip_steps < 1:
         logger.info("Step 1: Expanding JSON columns in CSV")
         expanded_csv = audit_outputs_dir / f"{input_name}-expanded.csv"
-        expand_json_csv(input_file, expanded_csv)
-        logger.info(f"Expanded CSV saved to: {expanded_csv}")
+        try:
+            expand_json_csv(input_file, expanded_csv)
+            logger.info(f"Expanded CSV saved to: {expanded_csv}")
+        except Exception as e:
+            logger.error(f"Error during Step 1 (expand_json_csv): {e}")
+            sys.exit(1)
     else:
         expanded_csv = audit_outputs_dir / f"{input_name}-expanded.csv"
         if not expanded_csv.exists():
