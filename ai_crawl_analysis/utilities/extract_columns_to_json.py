@@ -8,7 +8,7 @@ Parameters:
   :return: Path to the output JSON file with the extracted columns.
 
 Usage:
-from ai_migrations.utilities.extract_cols_to_json import extract_cols_to_json
+from ai_crawl_analysis.utilities.extract_cols_to_json import extract_cols_to_json
 
 """
 

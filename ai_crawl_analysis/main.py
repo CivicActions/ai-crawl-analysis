@@ -8,10 +8,10 @@ This script coordinates the execution of the entire data processing pipeline:
 4. Group data by migration paths
 
 Usage:
-    python -m ai_migrations.main input_file
+    python -m ai_crawl_analysis.main input_file
     
 Example:
-    python -m ai_migrations.main data/audit-inputs/sample-seed-fund.csv
+    python -m ai_crawl_analysis.main data/audit-inputs/sample-seed-fund.csv
 """
 
 import argparse
@@ -21,9 +21,9 @@ from pathlib import Path
 import logging
 
 # Import processing modules
-from ai_migrations.expand_json_csv import expand_json_csv
-from ai_migrations.crawl_analysis import crawl_analysis
-from ai_migrations.grouped_migration_paths import group_migration_paths, export_migration_groups
+from ai_crawl_analysis.expand_json_csv import expand_json_csv
+from ai_crawl_analysis.crawl_analysis import crawl_analysis
+from ai_crawl_analysis.grouped_migration_paths import group_migration_paths, export_migration_groups
 
 # Setup logging
 logging.basicConfig(

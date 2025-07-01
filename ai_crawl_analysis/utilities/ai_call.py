@@ -11,13 +11,13 @@ Parameters:
   :return: The response from the AI model.
 
 Usage:
-  from ai_migrations.utilities.ai_call import call_ai
+  from ai_crawl_analysis.utilities.ai_call import call_ai
   # With file:
   response = call_ai(prompt=prompt, file=json_file_path)
   # With direct content:
   response = call_ai(prompt=prompt, content=json_content)
 
-  Run directly to test: python run ai_migrations.utilities.ai_call OR uv run -m ai_migrations.utilities.ai_call
+  Run directly to test: python run ai_crawl_analysis.utilities.ai_call OR uv run -m ai_crawl_analysis.utilities.ai_call
 """
 
 from dotenv import load_dotenv

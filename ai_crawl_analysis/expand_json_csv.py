@@ -12,8 +12,8 @@ import json
 import re
 import os
 from pathlib import Path
-from ai_migrations.utilities.filter_html_rows import filter_html_rows
-from ai_migrations.utilities.header_cleaner import clean_header
+from ai_crawl_analysis.utilities.filter_html_rows import filter_html_rows
+from ai_crawl_analysis.utilities.header_cleaner import clean_header
 
 def extract_json(text):
     """

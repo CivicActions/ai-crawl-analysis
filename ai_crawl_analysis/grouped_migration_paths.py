@@ -2,7 +2,7 @@ from pathlib import Path
 import polars as pl
 import logging
 from io import StringIO
-from ai_migrations.utilities.json_cleaner import read_and_clean_json_file
+from ai_crawl_analysis.utilities.json_cleaner import read_and_clean_json_file
 from typing import Dict, Any
 
 # Setup logging

@@ -9,10 +9,10 @@ Parameters:
 """
 
 from pathlib import Path
-from ai_migrations.utilities.extract_columns_to_json import extract_cols_to_json
-from ai_migrations.utilities.ai_call import call_ai
-from ai_migrations.utilities.file_loaders import load_prompt, load_schema
-from ai_migrations.utilities.json_cleaner import read_and_clean_json_file
+from ai_crawl_analysis.utilities.extract_columns_to_json import extract_cols_to_json
+from ai_crawl_analysis.utilities.ai_call import call_ai
+from ai_crawl_analysis.utilities.file_loaders import load_prompt, load_schema
+from ai_crawl_analysis.utilities.json_cleaner import read_and_clean_json_file
 
 # Prompt and schema files.
 MIGRATION_GROUPS_PROMPT_FILE = "migration_group_prompt.txt"

@@ -70,7 +70,7 @@ flowchart TB
 
 ## 📁 Directory Structure
 
-- `ai_migrations/`: Core Python modules for data processing.
+- `ai_crawl_analysis/`: Core Python modules for data processing.
   - `crawl_analysis.py`: Tools for analyzing crawled data.
   - `deduplicate_column_items.py`: Deduplication utilities.
   - `expand_json_csv.py`: JSON-to-CSV expansion logic.
@@ -120,18 +120,18 @@ For more options, review the [Documentation for installing uv](https://docs.astr
 Project scripts are structured as modules. You can 
 - Run them using uv run or standard Python module syntax
    ```bash
-   uv run -m ai_migrations.main [path_to_crawl_file] (eg. data/audit-inputs/sample-seed-fund.csv)
+   uv run -m ai_crawl_analysis.main [path_to_crawl_file] (eg. data/audit-inputs/sample-seed-fund.csv)
    ```
 - Run individual scripts with these commands:
    ```bash
-     uv run -m ai_migrations.expand_json_csv
-     uv run -m ai_migrations.deduplicate_column_items
-     uv run -m ai_migrations.crawl analysis
+     uv run -m ai_crawl_analysis.expand_json_csv
+     uv run -m ai_crawl_analysis.deduplicate_column_items
+     uv run -m ai_crawl_analysis.crawl analysis
 **OR**
 
 - Run them using Python directly
   - Activate the virtual environment
-  - Then run `python -m ai_migrations.main`
+  - Then run `python -m ai_crawl_analysis.main`
 
 
 ### Environment variables
