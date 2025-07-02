@@ -9,11 +9,10 @@ It also filters out non-HTML rows before processing.
 
 import csv
 import json
-import re
-import os
 from pathlib import Path
 from ai_crawl_analysis.utilities.filter_html_rows import filter_html_rows
 from ai_crawl_analysis.utilities.header_cleaner import clean_header
+from ai_crawl_analysis.utilities.json_cleaner import remove_code_fences, extract_json_content
 
 def extract_json(text):
     """
@@ -28,10 +27,8 @@ def extract_json(text):
     if not text:
         return {}
 
-    text = text.strip()
-    # Try to extract JSON from triple backticks, with or without 'json'
-    match = re.search(r"```(?:json)?\s*({.*?})\s*```", text, re.DOTALL)
-    json_str = match.group(1) if match else text
+    # Extract JSON content from json_col, removing any code fences added by the LLM.
+    json_str = extract_json_content(remove_code_fences(text))
 
     try:
         return json.loads(json_str)
@@ -112,7 +109,7 @@ def expand_json_csv(input_file, output_file, json_col='Gemini: JSON schema v5'):
 
 if __name__ == "__main__":
     # Example usage when running this script directly
-    input_file = 'data/audit-inputs/sample-seed-fund.csv'
+    input_file = 'data/audit-inputs/32_paemst.nsf.gov.csv'
     input_name = Path(input_file).stem
     output_file = f'data/audit-outputs/{input_name}-expanded.csv'
     

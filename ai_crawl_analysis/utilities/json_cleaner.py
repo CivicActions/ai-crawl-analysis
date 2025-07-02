@@ -7,7 +7,7 @@ import json
 
 def extract_json_content(text: str) -> str:
     """
-    More robustly extract the first valid JSON block (array or object) from text.
+    Extract the first valid JSON block (array or object) from text.
     
     Parameters:
         text (str): Text that might contain JSON content mixed with other text.
