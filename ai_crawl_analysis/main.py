@@ -2,10 +2,10 @@
 Main module that orchestrates the AI migrations processing pipeline.
 
 This script coordinates the execution of the entire data processing pipeline:
-1. Expand JSON columns in a CSV file
+1. Expand JSON columns in a CSV file: expand_json_csv.py
 2. Filter HTML rows and clean data
-3. Analyze crawl data and extract descriptive columns
-4. Group data by migration paths
+3. Analyze crawl data and extract descriptive columns: crawl_analysis.py
+4. Group data by migration paths: grouped_migration_paths.py
 
 Usage:
     python -m ai_crawl_analysis.main input_file
