@@ -16,7 +16,6 @@ Example:
 
 import argparse
 import sys
-import os
 from pathlib import Path
 import logging
 
@@ -24,6 +23,7 @@ import logging
 from ai_crawl_analysis.expand_json_csv import expand_json_csv
 from ai_crawl_analysis.crawl_analysis import crawl_analysis
 from ai_crawl_analysis.grouped_migration_paths import group_migration_paths, export_migration_groups
+from ai_crawl_analysis.utilities.create_output_dirs import create_output_dirs
 
 # Setup logging
 logging.basicConfig(
@@ -51,13 +51,7 @@ def main():
         sys.exit(1)
     
     # Create output directories if they don't exist
-    output_base = Path(args.output_dir)
-    audit_outputs_dir = output_base / "audit-outputs"
-    crawl_analysis_dir = output_base / "crawl-analysis"
-    migration_groups_dir = output_base / "migration_groups"
-    
-    for directory in [audit_outputs_dir, crawl_analysis_dir, migration_groups_dir]:
-        directory.mkdir(parents=True, exist_ok=True)
+    audit_outputs_dir, crawl_analysis_dir, migration_groups_dir = create_output_dirs()
     
     # Get the base name of the input file for naming outputs
     input_name = input_file.stem
@@ -86,19 +80,19 @@ def main():
         columns_to_extract = ['address', 'page_description', 'page_structure', 'sidebar', 'sidebar_has_menu']
         
         crawl_analysis(str(expanded_csv), str(extracted_columns_file), columns_to_extract)
-        migration_groups_path = crawl_analysis_dir / "final-analysis-output.json"
-        logger.info(f"Crawl analysis completed, migration groups saved to: {migration_groups_path}")
+        crawl_analysis_output = crawl_analysis_dir / "final-analysis-output.json"
+        logger.info(f"Crawl analysis completed, migration groups saved to: {crawl_analysis_output}")
     else:
-        migration_groups_path = crawl_analysis_dir / "final-analysis-output.json"
-        if not migration_groups_path.exists():
-            logger.error(f"Migration groups file not found: {migration_groups_path}")
+        crawl_analysis_output = crawl_analysis_dir / "final-analysis-output.json"
+        if not crawl_analysis_output.exists():
+            logger.error(f"Crawl analysis output file not found: {crawl_analysis_output}")
             sys.exit(1)
-        logger.info(f"Skipped step 2, using existing file: {migration_groups_path}")
-    
+        logger.info(f"Skipped step 2, using existing file: {crawl_analysis_output}")
+
     # STEP 3: Group data by migration paths
     if args.skip_steps < 3:
         logger.info("Step 3: Grouping data by migration paths")
-        result = group_migration_paths(migration_groups_path)
+        result = group_migration_paths(crawl_analysis_output)
         export_migration_groups(result, migration_groups_dir)
         logger.info(f"Migration paths grouped and exported to: {migration_groups_dir}")
     else:

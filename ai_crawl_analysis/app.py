@@ -13,22 +13,14 @@ Usage:
 import sys
 import streamlit as st
 import zipfile
-from pathlib import Path
 
 # Import processing modules
 from ai_crawl_analysis.expand_json_csv import expand_json_csv
 from ai_crawl_analysis.crawl_analysis import crawl_analysis
 from ai_crawl_analysis.grouped_migration_paths import group_migration_paths, export_migration_groups
+from ai_crawl_analysis.utilities.create_output_dirs import create_output_dirs
 
-def create_file_dirs():
-    audit_outputs_dir = Path("data/audit-outputs")
-    audit_outputs_dir.mkdir(parents=True, exist_ok=True)
-    crawl_analysis_dir = Path("data/crawl-analysis")
-    crawl_analysis_dir.mkdir(parents=True, exist_ok=True)
-    migration_groups_dir = Path("data/migration_groups")
-    migration_groups_dir.mkdir(parents=True, exist_ok=True)
 
-    return audit_outputs_dir, crawl_analysis_dir, migration_groups_dir
 
 def expand_crawl_data(uploaded_file, expanded_csv, status):
     """
@@ -72,7 +64,7 @@ def main():
     
     if uploaded_file is not None:
         uploaded_file_name = uploaded_file.name
-        audit_outputs_dir, crawl_analysis_dir, migration_groups_dir = create_file_dirs()
+        audit_outputs_dir, crawl_analysis_dir, migration_groups_dir = create_output_dirs()
 
     else:
         st.warning("Please upload a CSV file to proceed.")
