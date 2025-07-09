@@ -2,6 +2,7 @@ data/audit-inputs/
 data/audit-outputs/
 data/crawl-analysis/
 data/migration_groups/
+data/migration_groups.zip
 !data/**/.gitkeep
 
 temp
