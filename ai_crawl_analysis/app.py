@@ -13,14 +13,14 @@ Usage:
 import sys
 import streamlit as st
 import zipfile
+import tempfile
+import os
 
 # Import processing modules
 from ai_crawl_analysis.expand_json_csv import expand_json_csv
 from ai_crawl_analysis.crawl_analysis import crawl_analysis
 from ai_crawl_analysis.grouped_migration_paths import group_migration_paths, export_migration_groups
 from ai_crawl_analysis.utilities.create_output_dirs import create_output_dirs
-
-
 
 def expand_crawl_data(uploaded_file, expanded_csv, status):
     """
@@ -32,16 +32,38 @@ def expand_crawl_data(uploaded_file, expanded_csv, status):
         status: Streamlit status object to update UI.
     """
     try:
-        # Expand JSON columns in the uploaded CSV
-        expand_json_csv(uploaded_file, expanded_csv)
+        # Create a temporary file to save the uploaded content
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.csv') as tmp:
+            # Write the uploaded file content to a temporary file
+            uploaded_file.seek(0)  # Reset file pointer to beginning
+            tmp.write(uploaded_file.getvalue())
+            temp_path = tmp.name
+        status.write("Expanding JSON columns in the uploaded CSV file...")
+        expand_json_csv(temp_path, expanded_csv)
+        
+        # Clean up the temporary file
+        os.unlink(temp_path)
+        
         status.write("✅ JSON Columns expanded successfully.")
         return expanded_csv
     except Exception as e:
         status.write(f"❌ Error during processing: {e}")
         st.error(f"Error processing file: {e}")
-        sys.exit(1)
+        st.stop()
 
 def main():
+    """
+    Main function to run the Streamlit app.
+    """
+    # Streamlit reruns the script on every interaction, so we need to ensure
+    # that the session states are tracked for each processing step.
+    if "crawl_analysis_complete" not in st.session_state:
+        st.session_state.crawl_analysis_complete = False
+    if "csv_expansion_complete" not in st.session_state:
+        st.session_state.csv_expansion_complete = False
+    if "migration_groups_complete" not in st.session_state:
+        st.session_state.migration_groups_complete = False
+
     # Config options for the Streamlit app.
     st.set_page_config(
         page_title="AI-enhanced site crawl analyzer",
@@ -68,13 +90,22 @@ def main():
 
     else:
         st.warning("Please upload a CSV file to proceed.")
-        sys.exit(1)
+        # Reset session states when no file is uploaded or if a previous upload was deleted.
+        st.session_state.crawl_analysis_complete = False
+        st.session_state.csv_expansion_complete = False
+        st.session_state.migration_groups_complete = False
+        st.stop()
 
     expanded_csv = audit_outputs_dir / f"{uploaded_file_name}-expanded.csv"
 
     # Trigger the file expansion and download expanded CSV.
     status = st.status(f"Processing {uploaded_file_name}...", expanded=True , state="running")
-    expand_crawl_data(uploaded_file, expanded_csv, status)
+    if not st.session_state.csv_expansion_complete:
+        expand_crawl_data(uploaded_file, expanded_csv, status)
+        st.session_state.csv_expansion_complete = True
+    else:
+        status.update(label=f"Using existing expanded file: {expanded_csv.name}", expanded=False, state="complete")
+    # Provide a download button for the expanded CSV file
     with open(expanded_csv, "rb") as f:
         st.download_button(
             label="Download the expanded CSV file",
@@ -87,18 +118,23 @@ def main():
     status.update(label = f"✅ {uploaded_file_name} has been expanded into {expanded_csv.name}.", expanded=False, state="complete")
 
     # STEP 2: Analyze crawl data and extract descriptive columns
-    status = st.status("Analyzing crawl data...", expanded=True, state="running")
+    status = st.status("Analyzing crawl data... (This can take a while depending on the size of the data)", expanded=True, state="running")
+
     extracted_columns_file = audit_outputs_dir / "extracted_columns.json"
     columns_to_extract = ['address', 'page_description', 'page_structure', 'sidebar', 'sidebar_has_menu']
-    
-    # Only run crawl_analysis if the expanded file was just created (i.e., after button click)
-    if expanded_csv.exists() and expanded_csv.stat().st_size > 0:
+    crawl_analysis_output = None
+
+    if not st.session_state.crawl_analysis_complete and expanded_csv.exists() and expanded_csv.stat().st_size > 0:
         crawl_analysis(str(expanded_csv), str(extracted_columns_file), columns_to_extract)
+        st.session_state.crawl_analysis_complete = True
         crawl_analysis_output = crawl_analysis_dir / "final-analysis-output.json"
         status.update(label=f"✅ Crawl analysis completed.", expanded=False, state="complete")
+    elif st.session_state.crawl_analysis_complete:
+        status.update(label=f"Using existing crawl analysis output", expanded=False, state="complete")
+        crawl_analysis_output = crawl_analysis_dir / "final-analysis-output.json"
     else:
         st.error("Expanded CSV file not found. Please ensure the file was processed correctly.")
-        sys.exit(1)
+        st.stop()
 
     # STEP 3: Group data by migration paths
     # Only proceed if crawl_analysis has finished and migration_groups_path exists and is not empty
@@ -107,12 +143,16 @@ def main():
       and crawl_analysis_output.stat().st_size > 0
     ):
       status = st.status("Grouping data by migration paths...", expanded=True, state="running")
-      result = group_migration_paths(crawl_analysis_output)
-      export_migration_groups(result, migration_groups_dir)
-      status.update(label=f"✅ Migration paths grouped and exported to: {migration_groups_dir.name}.", expanded=False, state="complete")
+      if not st.session_state.migration_groups_complete:
+          result = group_migration_paths(crawl_analysis_output)
+          export_migration_groups(result, migration_groups_dir)
+          st.session_state.migration_groups_complete = True
+          status.update(label=f"✅ Migration paths grouped and exported to: {migration_groups_dir.name}.", expanded=False, state="complete")
+      else:
+          status.update(label=f"Using existing migration groups output: {migration_groups_dir.name}", expanded=False, state="complete")
     else:
       st.error(f"{crawl_analysis_output.name} does not exist or is empty, or crawl analysis step not completed. Please check the crawl analysis step.")
-      sys.exit(1)
+      st.stop()
 
     # Add download section for migration group files
     st.divider()
