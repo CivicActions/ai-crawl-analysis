@@ -67,19 +67,6 @@ flowchart TB
     class C1,C2,C3,C4 aiProcess
 ```
 
-
-## 📁 Directory Structure
-
-- `ai_crawl_analysis/`: Core Python modules for data processing.
-  - `crawl_analysis.py`: Tools for analyzing crawled data.
-  - `deduplicate_column_items.py`: Deduplication utilities.
-  - `expand_json_csv.py`: JSON-to-CSV expansion logic.
-  - `utilities/`: Helper modules for AI calls, header cleaning, and HTML filtering.
-- `data/`: Example input and output datasets.
-  - `audit-inputs/`: Raw CSV files for processing.
-  - `audit-outputs/`: Processed and expanded CSV files.
-- `prompts/`: Prompt templates for AI-powered tasks.
-
 ## 📦 Requirements
 
 - Python **3.13+**
@@ -116,8 +103,36 @@ For more options, review the [Documentation for installing uv](https://docs.astr
    uv pip install -r pyproject.toml
    ```
 
-## Running scripts:
-Project scripts are structured as modules. You can 
+## How to run the crawl analysis:
+There are 2 options for running the crawl analysis. It can be run as an app on the browser our with Python scripts in the command line.
+
+### Running the analysis on the browser:
+The app provides a visual interface for uploading a CSV file generated from a site crawl. It runs the analysis and provides CSV file downloads of the analyzed and grouped urls.
+
+**Local development**
+In the command line, run the following:
+1. Initialize packages
+  ```bash
+   uv sync
+  ```
+2. Start the app:
+  ```bash
+   python -m streamlit run ai_crawl_analysis/app.py
+   - OR -
+   uv run -m streamlit run ai_crawl_analysis/app.py
+   ```
+This will open the app in http://localhost:8501/.
+Upload a CSV file to the upload field to start the analysis.
+
+**Cloud environment**
+URL - TBD
+When this is deployed to the cloud, upload a CSV file to start the analysis.
+
+
+### Running the analysis in the command line:
+The Python scripts provide a more granular method for executing the analysis. You can run all the steps or run individual steps for better control and debugging.
+
+The processing scripts are structured as modules. You can 
 - Run them using uv run or standard Python module syntax
    ```bash
    uv run -m ai_crawl_analysis.main [path_to_crawl_file] (eg. data/audit-inputs/sample-seed-fund.csv)
@@ -126,7 +141,7 @@ Project scripts are structured as modules. You can
    ```bash
      uv run -m ai_crawl_analysis.expand_json_csv
      uv run -m ai_crawl_analysis.deduplicate_column_items
-     uv run -m ai_crawl_analysis.crawl analysis
+     uv run -m ai_crawl_analysis.crawl_analysis
 **OR**
 
 - Run them using Python directly
