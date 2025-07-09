@@ -58,6 +58,13 @@ def export_migration_groups(result: Dict[str, Any], output_dir: str | Path) -> N
     """
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
+    # Empty the output directory if it exists
+    for file in output_dir.glob("*"):
+        try:
+            file.unlink()
+            logging.info(f"Deleted existing file: {file}")
+        except Exception as e:
+            logging.warning(f"Could not delete {file}: {e}")
 
     # Save grouped summary
     summary_path = output_dir / "summary.csv"
