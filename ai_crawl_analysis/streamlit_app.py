@@ -9,8 +9,6 @@ Usage:
   python -m streamlit run ai_crawl_analysis/app.py
 
 """
-
-import sys
 import streamlit as st
 import zipfile
 import tempfile
@@ -125,7 +123,7 @@ def main():
     crawl_analysis_output = None
 
     if not st.session_state.crawl_analysis_complete and expanded_csv.exists() and expanded_csv.stat().st_size > 0:
-        crawl_analysis(str(expanded_csv), str(extracted_columns_file), columns_to_extract)
+        crawl_analysis(str(expanded_csv), str(extracted_columns_file), columns_to_extract, True)
         st.session_state.crawl_analysis_complete = True
         crawl_analysis_output = crawl_analysis_dir / "final-analysis-output.json"
         status.update(label=f"✅ Crawl analysis completed.", expanded=False, state="complete")
@@ -142,12 +140,12 @@ def main():
       and crawl_analysis_output.exists()
       and crawl_analysis_output.stat().st_size > 0
     ):
-      status = st.status("Grouping data by migration paths...", expanded=True, state="running")
+      status = st.status("Sorting and grouping analyzed data by their identified migration groups...", expanded=True, state="running")
       if not st.session_state.migration_groups_complete:
           result = group_migration_paths(crawl_analysis_output)
           export_migration_groups(result, migration_groups_dir)
           st.session_state.migration_groups_complete = True
-          status.update(label=f"✅ Migration paths grouped and exported to: {migration_groups_dir.name}.", expanded=False, state="complete")
+          status.update(label="✅ URLs grouped by their identified migration groups for download.", expanded=False, state="complete")
       else:
           status.update(label=f"Using existing migration groups output: {migration_groups_dir.name}", expanded=False, state="complete")
     else:
