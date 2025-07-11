@@ -117,15 +117,15 @@ In the command line, run the following:
   ```
 2. Start the app:
   ```bash
-   python -m streamlit run ai_crawl_analysis/app.py
+   python -m streamlit run ai_crawl_analysis/streamlit_app.py
    - OR -
-   uv run -m streamlit run ai_crawl_analysis/app.py
+   uv run -m streamlit run ai_crawl_analysis/streamlit_app.py
    ```
 This will open the app in http://localhost:8501/.
 Upload a CSV file to the upload field to start the analysis.
 
 **Cloud environment**
-URL - TBD
+URL - This is TBD & will be updated when this gets deployed.
 When this is deployed to the cloud, upload a CSV file to start the analysis.
 
 
