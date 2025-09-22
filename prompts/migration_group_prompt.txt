@@ -8,7 +8,7 @@ Return all rows in the original JSON file, with an additional key called "migrat
 Important guidelines:
 - The groupings should reflect how pages could be migrated or managed together in a CMS migration or site redesign.
 - IMPORTANT! Only return a JSON array of objects. Do not add any additional text about the reuslts.
-- Ensure that the JSON object is complete and that the syntax is properly opened at the beginning of the file and closed at the end. 
+- Ensure that the JSON object is complete and that the syntax is properly opened at the beginning of the file and closed at the end.
 - Use consistent and human-readable group names.
 - Use URL patterns and metadata to infer groups.
 - Use the "page_description" and "page_structure" keys to help identify the content type.

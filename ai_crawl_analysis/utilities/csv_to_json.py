@@ -1,5 +1,7 @@
-import polars as pl
 import json
+
+import polars as pl
+
 
 def csv_to_json(input_csv: str):
     """
@@ -13,17 +15,19 @@ def csv_to_json(input_csv: str):
     df = pl.read_csv(
         input_csv,
         null_values=["None", "null", "NA", "N/A", ""],
-        schema_overrides={"HTTP Version": pl.Utf8}  # Ensure HTTP Version is always read as string
+        schema_overrides={
+            "HTTP Version": pl.Utf8
+        },  # Ensure HTTP Version is always read as string
     )
 
     # Convert the DataFrame to a list of dictionaries
     data = df.to_dicts()
 
     # Define the output JSON file path
-    output_json = input_csv.replace('.csv', '.json')
+    output_json = input_csv.replace(".csv", ".json")
 
     # Write the data to a JSON file
-    with open(output_json, 'w', encoding='utf-8') as f:
+    with open(output_json, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=4)
 
     return output_json
