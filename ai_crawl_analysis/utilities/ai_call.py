@@ -28,11 +28,14 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 
+load_dotenv()
+
+
 API_KEY = "GEMINI_API_KEY"
 DEFAULT_SYSTEM_INSTRUCTIONS = (
     "You are an AI assistant that provides insights based on the provided data."
 )
-DEFAULT_MODEL = "gemini-2.5-pro-preview-06-05"
+DEFAULT_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-pro-preview-06-05")
 DEFAULT_RESPONSE_SCHEMA = {
     "type": "object",
     "properties": {"insights": {"type": "string"}},
@@ -55,7 +58,6 @@ def call_ai(
         raise ValueError("Temperature must be between 0.0 and 1.0.")
 
     # Load the API key from environment variables
-    load_dotenv()
     api_key = os.getenv(API_KEY)
 
     if not api_key:
