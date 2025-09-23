@@ -30,7 +30,7 @@ flowchart TB
         B3[Clean Headers]
         A --> B1 --> B2 --> B3
     end
-    
+
     subgraph "Step 2: AI-powered Analysis"
         C1[Extract Informational Columns]
         C2[AI Analysis of Site Structure]
@@ -38,7 +38,7 @@ flowchart TB
         C4[Analyze Sidebar Content]
         B3 --> C1 --> C2 --> C3 --> C4
     end
-    
+
     subgraph "Step 3: Data Organization & Export"
         D1[Group by Migration Path]
         D2[Generate Statistics]
@@ -46,7 +46,7 @@ flowchart TB
         D4[Create Combined Sorted CSV]
         C4 --> D1 --> D2 --> D3 --> D4
     end
-    
+
     subgraph "Output Files"
         E1[Expanded CSV]
         E2[Migration Groups JSON]
@@ -54,14 +54,14 @@ flowchart TB
         E4[Individual Group CSVs]
         E5[All Data Sorted CSV]
         E6[Summary CSV]
-        
+
         D4 --> E1 & E2 & E3 & E4 & E5 & E6
     end
-    
+
     classDef inputOutput fill:#f9f,stroke:#333,stroke-width:2px
     classDef process fill:#bbf,stroke:#333,stroke-width:1px
     classDef aiProcess fill:#bfb,stroke:#333,stroke-width:1px
-    
+
     class A,E1,E2,E3,E4,E5,E6 inputOutput
     class B1,B2,B3,D1,D2,D3,D4 process
     class C1,C2,C3,C4 aiProcess
@@ -88,7 +88,7 @@ For more options, review the [Documentation for installing uv](https://docs.astr
 
 ## 🔧 Getting Started
 1. **Clone the repository**:
-```bash 
+```bash
     git clone https://github.com/civicactions/ai-migrations.git
     cd ai-migrations
 ```
@@ -132,7 +132,7 @@ When this is deployed to the cloud, upload a CSV file to start the analysis.
 ### Running the analysis in the command line:
 The Python scripts provide a more granular method for executing the analysis. You can run all the steps or run individual steps for better control and debugging.
 
-The processing scripts are structured as modules. You can 
+The processing scripts are structured as modules. You can
 - Run them using uv run or standard Python module syntax
    ```bash
    uv run -m ai_crawl_analysis.main [path_to_crawl_file] (eg. data/audit-inputs/sample-seed-fund.csv)

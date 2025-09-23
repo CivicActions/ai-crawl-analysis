@@ -9,53 +9,72 @@ This script coordinates the execution of the entire data processing pipeline:
 
 Usage:
     python -m ai_crawl_analysis.main input_file
-    
+
 Example:
     python -m ai_crawl_analysis.main data/audit-inputs/sample-seed-fund.csv
 """
 
 import argparse
+import logging
 import sys
 from pathlib import Path
-import logging
+
+from ai_crawl_analysis.crawl_analysis import crawl_analysis
 
 # Import processing modules
 from ai_crawl_analysis.expand_json_csv import expand_json_csv
-from ai_crawl_analysis.crawl_analysis import crawl_analysis
-from ai_crawl_analysis.grouped_migration_paths import group_migration_paths, export_migration_groups
+from ai_crawl_analysis.grouped_migration_paths import (
+    export_migration_groups,
+    group_migration_paths,
+)
 from ai_crawl_analysis.utilities.create_output_dirs import create_output_dirs
 
 # Setup logging
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
-    handlers=[logging.StreamHandler(sys.stdout)]
+    handlers=[logging.StreamHandler(sys.stdout)],
 )
 logger = logging.getLogger(__name__)
+
 
 def main():
     """
     Orchestrates the execution of the AI migrations processing pipeline.
     """
     # Parse command-line arguments
-    parser = argparse.ArgumentParser(description="Process crawled site data for AI-assisted migration.")
-    parser.add_argument("input_file", help="Path to the input CSV file with crawled data")
-    parser.add_argument("--skip-steps", type=int, default=0, help="Skip the first N processing steps. There are 3 steps in total. --skip-steps=2 will skip the first two steps and only run the third step.")
-    parser.add_argument("--output-dir", default="data", help="Base output directory for all generated files")
+    parser = argparse.ArgumentParser(
+        description="Process crawled site data for AI-assisted migration."
+    )
+    parser.add_argument(
+        "input_file", help="Path to the input CSV file with crawled data"
+    )
+    parser.add_argument(
+        "--skip-steps",
+        type=int,
+        default=0,
+        help="Skip the first N processing steps. There are 3 steps in total. --skip-steps=2 will "
+        "skip the first two steps and only run the third step.",
+    )
+    parser.add_argument(
+        "--output-dir",
+        default="data",
+        help="Base output directory for all generated files",
+    )
     args = parser.parse_args()
-    
+
     # Resolve input file path
     input_file = Path(args.input_file)
     if not input_file.exists():
         logger.error(f"Input file not found: {input_file}")
         sys.exit(1)
-    
+
     # Create output directories if they don't exist
     audit_outputs_dir, crawl_analysis_dir, migration_groups_dir = create_output_dirs()
-    
+
     # Get the base name of the input file for naming outputs
     input_name = input_file.stem
-    
+
     # STEP 1: Expand JSON columns in the CSV file
     if args.skip_steps < 1:
         logger.info("Step 1: Expanding JSON columns in CSV")
@@ -72,20 +91,32 @@ def main():
             logger.error(f"Expanded CSV not found: {expanded_csv}")
             sys.exit(1)
         logger.info(f"Skipped step 1, using existing file: {expanded_csv}")
-    
+
     # STEP 2: Analyze crawl data and extract descriptive columns
     if args.skip_steps < 2:
         logger.info("Step 2: Analyzing crawl data")
         extracted_columns_file = audit_outputs_dir / "extracted_columns.json"
-        columns_to_extract = ['address', 'page_description', 'page_structure', 'sidebar', 'sidebar_has_menu']
-        
-        crawl_analysis(str(expanded_csv), str(extracted_columns_file), columns_to_extract)
+        columns_to_extract = [
+            "address",
+            "page_description",
+            "page_structure",
+            "sidebar",
+            "sidebar_has_menu",
+        ]
+
+        crawl_analysis(
+            str(expanded_csv), str(extracted_columns_file), columns_to_extract
+        )
         crawl_analysis_output = crawl_analysis_dir / "final-analysis-output.json"
-        logger.info(f"Crawl analysis completed, migration groups saved to: {crawl_analysis_output}")
+        logger.info(
+            f"Crawl analysis completed, migration groups saved to: {crawl_analysis_output}"
+        )
     else:
         crawl_analysis_output = crawl_analysis_dir / "final-analysis-output.json"
         if not crawl_analysis_output.exists():
-            logger.error(f"Crawl analysis output file not found: {crawl_analysis_output}")
+            logger.error(
+                f"Crawl analysis output file not found: {crawl_analysis_output}"
+            )
             sys.exit(1)
         logger.info(f"Skipped step 2, using existing file: {crawl_analysis_output}")
 
@@ -97,8 +128,9 @@ def main():
         logger.info(f"Migration paths grouped and exported to: {migration_groups_dir}")
     else:
         logger.info(f"Skipped step 3, using existing files in: {migration_groups_dir}")
-    
+
     logger.info("Processing pipeline completed successfully.")
+
 
 if __name__ == "__main__":
     main()

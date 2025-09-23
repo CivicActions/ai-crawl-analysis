@@ -1,18 +1,22 @@
 """
-Analyzes a site crawl by extracting specified columns from a JSON file and adding suggested migration groups to the data.
+Analyzes a site crawl by extracting specified columns from a JSON file and adding suggested migration
+groups to the data.
 
 Parameters:
 :param input_csv: Path to the input CSV file containing site crawl data.
 :param output_json: Path to the output JSON file where extracted columns will be saved.
 :param columns: List of column names to extract from the JSON file.
-:param is_web_app: Boolean indicating if the function is called from the streamlit web app context (default is False).
+:param is_web_app: Boolean indicating if the function is called from the streamlit web app context
+   (default is False).
 :return: Path to the output JSON file with the extracted columns.
 """
 
-import streamlit as st
 from pathlib import Path
-from ai_crawl_analysis.utilities.extract_columns_to_json import extract_cols_to_json
+
+import streamlit as st
+
 from ai_crawl_analysis.utilities.ai_call import call_ai
+from ai_crawl_analysis.utilities.extract_columns_to_json import extract_cols_to_json
 from ai_crawl_analysis.utilities.file_loaders import load_prompt, load_schema
 from ai_crawl_analysis.utilities.json_cleaner import clean_json_file
 
@@ -22,67 +26,106 @@ MIGRATION_GROUPS_SCHEMA_FILE = "migration_group_schema.json"
 SIDEBAR_GROUPS_PROMPT_FILE = "migration_group_with_sidebar_prompt.txt"
 SIDEBAR_GROUPS_SCHEMA_FILE = "migration_group_with_sidebar_schema.json"
 
-migration_groups_system_instructions = "You are a skilled SEO and content structure analyst with expertise in site architecture, content classification, and CMS migrations. Your goal is to help organize URLs into clear content types to support site migration efforts."
-sidebar_groups_system_instructions = "You are a skilled SEO and content structure analyst with expertise in site architecture, content classification, and CMS migrations. Your goal is to help organize URLs into clear content types to support site migration efforts. You will also analyze the sidebar content to ensure similar sidebars have consistent descriptions."
+migration_groups_system_instructions = (
+    "You are a skilled SEO and content structure analyst with "
+    "expertise in site architecture, content classification, and "
+    "CMS migrations. Your goal is to help organize URLs into clear "
+    "content types to support site migration efforts."
+)
+sidebar_groups_system_instructions = (
+    "You are a skilled SEO and content structure analyst with expertise "
+    "in site architecture, content classification, and CMS migrations. "
+    "Your goal is to help organize URLs into clear content types to "
+    "support site migration efforts. You will also analyze the sidebar "
+    "content to ensure similar sidebars have consistent descriptions."
+)
 
-def crawl_analysis(input_csv: str, output_json: str, columns: list, is_web_app: bool = False):
+
+def crawl_analysis(
+    input_csv: str, output_json: str, columns: list, is_web_app: bool = False
+):
 
     data = extract_cols_to_json(input_csv, output_json, columns)
     print(f"Extracted columns {columns} from {input_csv} to {output_json}")
-    if is_web_app: expander = st.expander("Detailed crawl analysis logs", expanded=True)
+    if is_web_app:
+        expander = st.expander("Detailed crawl analysis logs", expanded=True)
 
     # Load the migration groups prompt from the file.
     prompt = load_prompt(MIGRATION_GROUPS_PROMPT_FILE)
     migration_groups_schema = load_schema(MIGRATION_GROUPS_SCHEMA_FILE)
     system_instructions = migration_groups_system_instructions
-    if is_web_app: expander.write("Sending an AI call to analyze crawl data and assign migration groups to urls...")
+    if is_web_app:
+        expander.write(
+            "Sending an AI call to analyze crawl data and assign migration groups to urls..."
+        )
     response = call_ai(
         prompt=prompt,
         system_instructions=system_instructions,
         file=str(data),
-        response_schema=migration_groups_schema
+        response_schema=migration_groups_schema,
     )
 
     # Write the response to a new JSON file
     # Define the output path for migration groups analysis
-    migration_groups_path = Path('data/crawl-analysis/migration_groups.json')
-    if is_web_app: expander.write("✅ AI analysis to identify and assign migration groups completed.")
+    migration_groups_path = Path("data/crawl-analysis/migration_groups.json")
+    if is_web_app:
+        expander.write(
+            "✅ AI analysis to identify and assign migration groups completed."
+        )
     migration_groups_path.parent.mkdir(parents=True, exist_ok=True)
-    
-    migration_groups_path.write_text(response, encoding='utf-8')
+
+    migration_groups_path.write_text(response, encoding="utf-8")
     print(f"Migration groups assigned and saved to {migration_groups_path}")
 
     if not response:
-      print("No migration groups found. Skipping sidebar analysis.")
-      exit(0)
-    
-    # Pass #2: If the sidebar column has content, analyze the content, rewrite the sidebar content so similar sidebars have the same description.
+        print("No migration groups found. Skipping sidebar analysis.")
+        exit(0)
+
+    # Pass #2: If the sidebar column has content, analyze the content, rewrite the sidebar content
+    # so similar sidebars have the same description.
     # Load the sidebar prompt
     sidebar_prompt = load_prompt(SIDEBAR_GROUPS_PROMPT_FILE)
     sidebar_schema = load_schema(SIDEBAR_GROUPS_SCHEMA_FILE)
 
     # The schema generated by the LLM is wrapped in backticks. Read and clean the file content
     cleaned_content = clean_json_file(migration_groups_path)
-    if is_web_app: expander.write("Starting a second AI call to analyze sidebars within migration groups..")
+    if is_web_app:
+        expander.write(
+            "Starting a second AI call to analyze sidebars within migration groups.."
+        )
 
     sidebar_response = call_ai(
         prompt=sidebar_prompt,
         system_instructions=sidebar_groups_system_instructions,
         content=cleaned_content,
-        response_schema=sidebar_schema
+        response_schema=sidebar_schema,
     )
 
     # Write the response to a new JSON file
-    sidebar_path = Path('data/crawl-analysis/final-analysis-output.json')
-    sidebar_path.write_text(sidebar_response, encoding='utf-8')
-    if is_web_app: expander.write("✅ All AI processing completed. Output saved for further sorting and grouping.")
+    sidebar_path = Path("data/crawl-analysis/final-analysis-output.json")
+    sidebar_path.write_text(sidebar_response, encoding="utf-8")
+    if is_web_app:
+        expander.write(
+            "✅ All AI processing completed. Output saved for further sorting and grouping."
+        )
     print(f"Sidebar content rewritten and saved to {sidebar_path}")
+
 
 # Example usage
 if __name__ == "__main__":
-    input_file = Path('data/audit-outputs/66_ercprogram.ceriumapplications.com - 1 - All.csv-expanded.csv')  # Change this to your input CSV file
-    output_file = Path('data/audit-outputs/extracted_columns.json')  # Change this to your desired output JSON file
-    columns_to_extract = ['address','page_description', 'page_structure', 'sidebar', 'sidebar_has_menu']  # Specify the columns you want to extract    
+    input_file = Path(
+        "data/audit-outputs/66_ercprogram.ceriumapplications.com - 1 - All.csv-expanded.csv"
+    )  # Change this to your input CSV file
+    output_file = Path(
+        "data/audit-outputs/extracted_columns.json"
+    )  # Change this to your desired output JSON file
+    columns_to_extract = [
+        "address",
+        "page_description",
+        "page_structure",
+        "sidebar",
+        "sidebar_has_menu",
+    ]  # Specify the columns you want to extract
 
     # Extract columns to JSON
     data = crawl_analysis(str(input_file), str(output_file), columns_to_extract)

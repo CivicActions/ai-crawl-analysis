@@ -1,12 +1,15 @@
-from pathlib import Path
-import polars as pl
 import logging
 from io import StringIO
+from pathlib import Path
+from typing import Any, Dict
+
+import polars as pl
+
 from ai_crawl_analysis.utilities.json_cleaner import clean_json_file
-from typing import Dict, Any
 
 # Setup logging
 logging.basicConfig(level=logging.INFO, format="%(message)s")
+
 
 def group_migration_paths(analysis_output: str | Path) -> Dict[str, Any]:
     """
@@ -33,16 +36,12 @@ def group_migration_paths(analysis_output: str | Path) -> Dict[str, Any]:
         for group in df["migration_group"].unique().to_list()
     }
 
+    return {"all_data": df, "grouped_summary": grouped, "groups": groups_dict}
 
-
-    return {
-        "all_data": df,
-        "grouped_summary": grouped,
-        "groups": groups_dict
-    }
 
 def _sanitize_filename(name: str) -> str:
     return "".join(c if c.isalnum() else "_" for c in name)
+
 
 def export_migration_groups(result: Dict[str, Any], output_dir: str | Path) -> None:
     """
@@ -84,6 +83,7 @@ def export_migration_groups(result: Dict[str, Any], output_dir: str | Path) -> N
         file_path = output_dir / f"{safe_name}.csv"
         df_group.write_csv(file_path)
         logging.info(f"Group '{group_name}' saved to {file_path}")
+
 
 if __name__ == "__main__":
     analysis_output_path = Path("data/crawl-analysis/migration_groups.json")

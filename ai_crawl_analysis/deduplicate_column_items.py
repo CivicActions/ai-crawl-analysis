@@ -2,13 +2,16 @@ import ast
 import csv
 from typing import List, Set
 
-def get_deduplicated_items_from_column(csv_filename: str, column_name: str) -> List[str]:
+
+def get_deduplicated_items_from_column(
+    csv_filename: str, column_name: str
+) -> List[str]:
     """
     Reads a CSV file, extracts all values from the specified column, parses Python-style list strings,
     and returns a deduplicated list of items (stripped of whitespace).
     """
     items: Set[str] = set()
-    with open(csv_filename, newline='', encoding='utf-8') as csvfile:
+    with open(csv_filename, newline="", encoding="utf-8") as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
             value = row.get(column_name, "")
@@ -28,11 +31,12 @@ def get_deduplicated_items_from_column(csv_filename: str, column_name: str) -> L
                             items.add(cleaned)
                 except Exception:
                     # Fallback: treat as a comma-separated string
-                    for item in value.split(','):
+                    for item in value.split(","):
                         cleaned = item.strip().strip("'\"")
                         if cleaned:
                             items.add(cleaned)
     return sorted(items)
+
 
 # Example usage:
 if __name__ == "__main__":
