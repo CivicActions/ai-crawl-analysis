@@ -1,6 +1,6 @@
 # How to run site crawls with Gemini in the Screaming Frog SEO Spider tool
 
-To download and install Screaming frog, go to https://www.screamingfrog.co.uk/seo-spider/
+To download and install Screaming Frog, go to https://www.screamingfrog.co.uk/seo-spider/
 Assumption: You have already set up the Screaming Frog app and can run Screaming Frog audits locally.
 
 - Add the Gemini API key to Config → API Access → Gemini → Account information. Set the Account type to paid.

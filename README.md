@@ -1,7 +1,7 @@
-# AI-enhanced site crawl analysis:
+# AI-enhanced site crawl analysis
 
 ## ✨ Description
-The AI crawl analysis tool is a set of utilities that together, interpretes data generated from site crawls to inform content migrations. The tool enhances traditional site crawl analysis by gathering additional context about a site’s pages during site crawls. It performs further analysis on the extracted data to provide relevant content insights. The goal is to efficiently and quickly gather site information and apply data-based decisions to site migrations.
+The AI crawl analysis tool is a set of utilities that together, interprets data generated from site crawls to inform content migrations. The tool enhances traditional site crawl analysis by gathering additional context about a site’s pages during site crawls. It performs further analysis on the extracted data to provide relevant content insights. The goal is to efficiently and quickly gather site information and apply data-based decisions to site migrations.
 
 ## 🚀 Features
 - **Crawl Analysis**: Analyze and extract insights from crawled datasets.

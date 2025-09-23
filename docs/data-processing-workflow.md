@@ -126,7 +126,7 @@ flowchart TD
 3. **Data Grouping**: Statistical analysis and export to multiple formats
 
 ### 🧹 **JSON Cleaning Process**
-- Removes LLM-generated code fences (````json```)
+- Removes LLM-generated code fences (```json```)
 - Extracts pure JSON content from mixed text
 - Fixes incomplete/cut-off objects
 - Ensures valid JSON structure
