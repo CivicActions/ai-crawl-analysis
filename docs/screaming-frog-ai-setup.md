@@ -14,6 +14,6 @@ Values:
   - Model name: [your Gemini model name]
   - Content type to run urls on: HTML
   - Text to run prompt on: HTML
-  - Prompt: Copy and paste the [Screaming AI prompt](prompts/screaming-frog-prompt.txt)
+  - Prompt: Copy and paste the [Screaming Frog AI prompt](../prompts/screaming-frog-prompt.txt)
   - Optional: It’s helpful to add this config to the prompt library. Otherwise, it can get wiped when the app restarts.
 
